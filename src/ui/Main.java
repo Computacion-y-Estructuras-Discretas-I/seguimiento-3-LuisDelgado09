@@ -1,6 +1,8 @@
 package ui;
 
+import java.util.Objects;
 import java.util.Scanner;
+
 import structures.PilaGenerica;
 import structures.TablasHash;
 
@@ -21,7 +23,7 @@ public class Main {
             System.out.print("Opcion: ");
 
             int opcion = sc.nextInt();
-            sc.nextLine(); 
+            sc.nextLine();
 
             switch (opcion) {
                 case 1:
@@ -60,21 +62,76 @@ public class Main {
 
     /**
      * Verifica si la expresion esta balanceada usando PilaGenerica
+     *
      * @param s expresion a verificar
      * @return true si esta balanceada, false si no
      */
     public boolean verificarBalanceo(String s) {
-        // TODO: completar 
-        return false;
+        if (s.isEmpty()) {
+            return true;
+        }
+
+        PilaGenerica<Character> pila = new PilaGenerica<>(s.length());
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if (c == '(' || c == '{' || c == '[') {
+                pila.Push(c);
+            } else if (c == ')' || c == '}' || c == ']') {
+                if (pila.getTop() == 0) {
+                    return false;
+                }
+
+                char tope = pila.Pop();
+                if (c == ')' && tope != '(') {
+                    return false;
+                }
+                if (c == ']' && tope != '[') {
+                    return false;
+                }
+                if (c == '}' && tope != '{') {
+                    return false;
+                }
+
+            }
+        }
+
+        return pila.getTop() == 0;
+
     }
 
     /**
      * Encuentra y muestra todos los pares unicos de numeros que sumen objetivo usando TablasHash.
-     * @param numeros arreglo de numeros enteros
+     *
+     * @param numeros  arreglo de numeros enteros
      * @param objetivo suma objetivo
      */
     public void encontrarParesConSuma(int[] numeros, int objetivo) {
-        // TODO: completar
+
+        try {
+            TablasHash tablaHash = new TablasHash(numeros.length);
+
+            for (int x : numeros) {
+                tablaHash.insert(Math.abs(x), x);
+
+            }
+            for (int x: numeros) {
+                int complemento = objetivo - x;
+
+                if (tablaHash.search(Math.abs(complemento), complemento)) {
+                    if(x<complemento) {
+                        System.out.println("Par encontrado: "+x+","+complemento);
+                    }
+
+                }
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     public static void main(String[] args) throws Exception {
